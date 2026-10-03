@@ -1,12 +1,10 @@
 {
   "name": "mayumshka-game",
   "version": "1.0.0",
-  "description": "MayUmshka Desktop Game",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder --win --x64"
   },
   "devDependencies": {
     "electron": "^31.0.0",
@@ -24,13 +22,20 @@
     ],
     "win": {
       "icon": "www/icon.png",
-      "target": "nsis"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
     },
-    "mac": {
-      "icon": "www/icon.png"
-    },
-    "linux": {
-      "target": "AppImage"
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     }
   }
 }
