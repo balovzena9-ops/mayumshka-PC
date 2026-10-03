@@ -1,0 +1,36 @@
+{
+  "name": "mayumshka-game",
+  "version": "1.0.0",
+  "description": "MayUmshka Desktop Game",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.mayumshka.game",
+    "productName": "MayUmshka",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "www/**/*"
+    ],
+    "win": {
+      "icon": "www/icon.png",
+      "target": "nsis"
+    },
+    "mac": {
+      "icon": "www/icon.png"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
