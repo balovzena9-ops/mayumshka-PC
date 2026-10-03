@@ -1,4 +1,4 @@
-name: Build Desktop App
+name: Build Windows App
 
 on:
   push:
@@ -7,10 +7,7 @@ on:
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: windows-latest
 
     steps:
       - name: Check out git repository
@@ -29,8 +26,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Artifacts
+      - name: Upload Installer Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.os }}
-          path: dist/*.{exe,dmg,AppImage,zip}
+          name: MayUmshka-Windows-Installer
+          # Исправленный путь: electron-builder складывает x64 установщики в подпапку win-unpacked или прямо в dist со специфичным именем
+          path: dist/MayUmshka Setup *.exe
