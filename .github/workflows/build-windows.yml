@@ -22,9 +22,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Clean electron-builder cache
+      - name: List repo files
         run: |
-          Remove-Item -Recurse -Force "$env:LOCALAPPDATA\electron-builder" -ErrorAction SilentlyContinue
+          Write-Host "=== ROOT ==="
+          Get-ChildItem -Force
+          Write-Host "=== build/ ==="
+          Get-ChildItem -Force build -ErrorAction SilentlyContinue
 
       - name: Cache node_modules
         uses: actions/cache@v4
