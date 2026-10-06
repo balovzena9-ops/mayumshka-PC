@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
+    "build": "electron-builder",
     "build:win": "electron-builder --win --publish never"
   },
   "devDependencies": {
@@ -21,37 +22,33 @@
       "output": "dist",
       "buildResources": "build"
     },
- "files": [
-  "index.html",
-  "three.min.js",
-  "main.js",
-  "package.json",
-  "build/icon.ico",
-  "build/icon.png"
-],
+    "files": [
+      "index.html",
+      "three.min.js",
+      "main.js",
+      "package.json",
+      "build/icon.ico",
+      "build/icon.png"
+    ],
     "win": {
       "target": [
         {
-          "target": "nsis",
+          "target": "portable",
           "arch": ["x64"]
         }
       ],
       "icon": "build/icon.ico",
-      "artifactName": "${productName}-${version}-Setup.${ext}"
+      "artifactName": "${productName}-${version}-Portable.${ext}"
     },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowElevation": true,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "MayUmshka",
-      "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico",
-      "installerHeaderIcon": "build/icon.ico",
-      "deleteAppDataOnUninstall": false,
-      "runAfterFinish": true
+    "portable": {
+      "artifactName": "${productName}-${version}-Portable.${ext}",
+      "requestExecutionLevel": "user"
+    },
+    "mac": {
+      "target": []
+    },
+    "linux": {
+      "target": []
     }
   }
 }
