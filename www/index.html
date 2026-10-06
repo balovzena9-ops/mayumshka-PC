@@ -576,7 +576,8 @@ body.touch-mode{touch-action:none;overscroll-behavior:none}
 
 <!-- ИЗМЕНЕНО: удалён блок #mobileControls (джойстик, кнопки E и пауза) -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- ИЗМЕНЕНО: CDN three.js заменён на локальный файл three.min.js -->
+<script src="three.min.js"></script>
 
 <script>
 window.onerror = function(msg, src, line, col, err){
@@ -3564,7 +3565,6 @@ function runLoadingScreen(onDone){
   nextStep();
 }
 
-// ИЗМЕНЕНО: убран вызов setupMobileControls() и touch-mode
 function startGame(){
   try { init(); } catch(e) { console.error('[startGame] init() error:', e); }
 }
