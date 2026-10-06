@@ -1,15 +1,34 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 Menu.setApplicationMenu(null);
 
-// WebGL и аппаратное ускорение
 app.commandLine.appendSwitch('enable-webgl');
 app.commandLine.appendSwitch('enable-gpu-rasterization');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
 
+// Файл лога для отладки — рядом с .exe
+const LOG_PATH = path.join(app.getPath('userData'), 'mayumshka_log.txt');
+function log(msg){
+  try { fs.appendFileSync(LOG_PATH, '[' + new Date().toISOString() + '] ' + msg + '\n'); } catch(e){}
+}
+try { fs.writeFileSync(LOG_PATH, '=== MayUmshka log ===\n'); } catch(e){}
+
 function createWindow() {
+  // Проверяем, что three.min.js попал в сборку
+  const threePath = path.join(__dirname, 'three.min.js');
+  const threeExists = fs.existsSync(threePath);
+  const threeSize = threeExists ? fs.statSync(threePath).size : 0;
+  const indexPath = path.join(__dirname, 'index.html');
+  const indexExists = fs.existsSync(indexPath);
+  const indexSize = indexExists ? fs.statSync(indexPath).size : 0;
+
+  log('__dirname: ' + __dirname);
+  log('index.html exists: ' + indexExists + ', size: ' + indexSize);
+  log('three.min.js exists: ' + threeExists + ', size: ' + threeSize);
+
   const win = new BrowserWindow({
     width: 1280,
     height: 720,
@@ -23,36 +42,42 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      // ==== ЭТИ ДВЕ СТРОКИ — ключ к работе игры ====
       webSecurity: false,
       sandbox: false,
-      // =============================================
       enableBlinkFeatures: 'PointerLockOptions'
     }
   });
 
-  // Загружаем index.html прямо из app.asar
   win.loadFile('index.html');
 
-  // F12 — открыть/закрыть DevTools
-  win.webContents.on('before-input-event', (event, input) => {
-    if (input.key === 'F12' && input.type === 'keyDown') {
-      win.webContents.toggleDevTools();
-      event.preventDefault();
-    }
-  });
+  // === Автоматически открываем DevTools в отдельном окне ===
+  win.webContents.openDevTools({ mode: 'detach' });
 
-  // Логи из renderer в консоль Electron
+  // Логи из renderer
   win.webContents.on('console-message', (event, level, message, line, sourceId) => {
-    console.log('[RENDERER]', message, '(' + sourceId + ':' + line + ')');
+    const line1 = '[RENDERER L' + level + '] ' + message + ' (' + sourceId + ':' + line + ')';
+    console.log(line1);
+    log(line1);
   });
 
   win.webContents.on('did-fail-load', (e, code, desc, failedUrl) => {
-    console.error('[LOAD FAIL]', code, desc, failedUrl);
+    const line1 = '[LOAD FAIL] ' + code + ' ' + desc + ' ' + failedUrl;
+    console.error(line1);
+    log(line1);
   });
 
   win.webContents.on('render-process-gone', (e, details) => {
-    console.error('[RENDERER GONE]', details);
+    const line1 = '[RENDERER GONE] ' + JSON.stringify(details);
+    console.error(line1);
+    log(line1);
+  });
+
+  win.webContents.on('did-finish-load', () => {
+    log('Page did-finish-load OK');
+    // Проверяем, определён ли THREE в renderer
+    win.webContents.executeJavaScript('typeof THREE')
+      .then(res => { log('THREE in renderer: ' + res); })
+      .catch(err => { log('THREE check error: ' + err); });
   });
 
   win.once('ready-to-show', () => {
