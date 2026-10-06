@@ -1,15 +1,27 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, protocol } = require('electron');
 const path = require('path');
+const fs = require('fs');
+const url = require('url');
 
 Menu.setApplicationMenu(null);
 
-// Форсируем WebGL и аппаратное ускорение
+// Регистрируем схему app:// как привилегированную (с WebGL, fetch, CORS)
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'app',
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+      stream: true
+    }
+  }
+]);
+
 app.commandLine.appendSwitch('enable-webgl');
-app.commandLine.appendSwitch('enable-gpu-rasterization');
-app.commandLine.appendSwitch('enable-zero-copy');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
-app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
-app.disableHardwareAcceleration = false;
+app.commandLine.appendSwitch('enable-gpu-rasterization');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -25,14 +37,23 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      webSecurity: false,               // ← временно, для диагностики CDN
+      webSecurity: true,                // ← безопасность включена
       enableBlinkFeatures: 'PointerLockOptions'
     }
   });
 
-  win.loadFile('index.html');
+  // Все файлы из корня проекта отдаются через app://
+  protocol.registerFileProtocol('app', (request, callback) => {
+    let filePath = decodeURIComponent(request.url.replace('app://', ''));
+    if (filePath.startsWith('/')) filePath = filePath.slice(1);
+    if (!filePath) filePath = 'index.html';
+    const fullPath = path.join(__dirname, filePath);
+    callback({ path: fullPath });
+  });
 
-  // F12 — открыть DevTools
+  win.loadURL('app://index.html');
+
+  // F12 — DevTools
   win.webContents.on('before-input-event', (event, input) => {
     if (input.key === 'F12' && input.type === 'keyDown') {
       win.webContents.toggleDevTools();
@@ -40,17 +61,8 @@ function createWindow() {
     }
   });
 
-  // Ошибки из renderer-процесса — в консоль Electron
-  win.webContents.on('console-message', (event, level, message, line, sourceId) => {
-    console.log('[RENDERER][' + level + ']', message, '(' + sourceId + ':' + line + ')');
-  });
-
-  win.webContents.on('did-fail-load', (e, code, desc, url) => {
-    console.error('[LOAD FAIL]', code, desc, url);
-  });
-
-  win.webContents.on('render-process-gone', (e, details) => {
-    console.error('[RENDERER GONE]', details);
+  win.webContents.on('console-message', (e, level, message, line, sourceId) => {
+    console.log('[RENDERER]', message, '(' + sourceId + ':' + line + ')');
   });
 
   win.once('ready-to-show', () => {
