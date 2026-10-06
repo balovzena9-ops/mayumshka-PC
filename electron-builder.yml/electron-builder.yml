@@ -35,7 +35,6 @@ nsis:
   deleteAppDataOnUninstall: false
   runAfterFinish: true
 
-# Заглушки, чтобы electron-builder не ругался при сборке только Windows
 mac:
   target: []
 linux:
