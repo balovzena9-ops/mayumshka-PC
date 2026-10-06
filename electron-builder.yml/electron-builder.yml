@@ -10,47 +10,9 @@ files:
   - "index.html"
   - "main.js"
   - "package.json"
-  - "build/icon.png"
   - "build/icon.ico"
-  - "build/icon.icns"
+  - "build/icon.png"
 
-# ============ macOS ============
-mac:
-  target:
-    - target: dmg
-      arch:
-        - x64        # Intel
-        - arm64      # Apple Silicon (M1/M2/M3)
-    - target: zip
-      arch:
-        - x64
-        - arm64
-  icon: build/icon.icns
-  category: public.app-category.games
-  artifactName: "${productName}-${version}-${arch}.${ext}"
-  darkModeSupport: true
-  hardenedRuntime: true
-  gatekeeperAssess: false
-  entitlements: entitlements.mac.plist
-  entitlementsInherit: entitlements.mac.plist
-
-dmg:
-  title: "${productName} — Завод «Баловск»"
-  icon: build/icon.icns
-  backgroundColor: "#000000"
-  window:
-    width: 540
-    height: 380
-  contents:
-    - x: 140
-      y: 200
-      type: file
-    - x: 400
-      y: 200
-      type: link
-      path: /Applications
-
-# ============ Windows ============
 win:
   target:
     - target: nsis
@@ -61,14 +23,20 @@ win:
 
 nsis:
   oneClick: false
+  perMachine: false
+  allowElevation: true
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: "MayUmshka"
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
 
-# ============ Linux ============
+# Заглушки, чтобы electron-builder не ругался при сборке только Windows
+mac:
+  target: []
 linux:
-  target:
-    - AppImage
-  icon: build/icon.png
-  category: Game
+  target: []
