@@ -1,0 +1,74 @@
+appId: com.myrunplay.mayumshka
+productName: MayUmshka
+copyright: "© 2026 MYRUNPLAY"
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - "index.html"
+  - "main.js"
+  - "package.json"
+  - "build/icon.png"
+  - "build/icon.ico"
+  - "build/icon.icns"
+
+# ============ macOS ============
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64        # Intel
+        - arm64      # Apple Silicon (M1/M2/M3)
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.icns
+  category: public.app-category.games
+  artifactName: "${productName}-${version}-${arch}.${ext}"
+  darkModeSupport: true
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: entitlements.mac.plist
+  entitlementsInherit: entitlements.mac.plist
+
+dmg:
+  title: "${productName} — Завод «Баловск»"
+  icon: build/icon.icns
+  backgroundColor: "#000000"
+  window:
+    width: 540
+    height: 380
+  contents:
+    - x: 140
+      y: 200
+      type: file
+    - x: 400
+      y: 200
+      type: link
+      path: /Applications
+
+# ============ Windows ============
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+  artifactName: "${productName}-${version}-Setup.${ext}"
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: "MayUmshka"
+
+# ============ Linux ============
+linux:
+  target:
+    - AppImage
+  icon: build/icon.png
+  category: Game
