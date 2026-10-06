@@ -1,25 +1,9 @@
-const { app, BrowserWindow, Menu, protocol } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
-const url = require('url');
 
 Menu.setApplicationMenu(null);
 
-// ===== Регистрируем протокол app:// (правильный способ, работает с .asar) =====
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: 'app',
-    privileges: {
-      standard: true,
-      secure: true,
-      supportFetchAPI: true,
-      corsEnabled: true,
-      stream: true,
-      bypassCSP: false
-    }
-  }
-]);
-
-// Форсируем WebGL и аппаратное ускорение
+// WebGL и аппаратное ускорение
 app.commandLine.appendSwitch('enable-webgl');
 app.commandLine.appendSwitch('enable-gpu-rasterization');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
@@ -39,29 +23,16 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      webSecurity: true,
+      // ==== ЭТИ ДВЕ СТРОКИ — ключ к работе игры ====
+      webSecurity: false,
+      sandbox: false,
+      // =============================================
       enableBlinkFeatures: 'PointerLockOptions'
     }
   });
 
-  // Отдаём файлы из корня проекта через app://
-  protocol.registerFileProtocol('app', (request, callback) => {
-    let filePath = decodeURIComponent(request.url.replace('app://', ''));
-    // Убираем возможный ведущий слэш
-    if (filePath.startsWith('/')) filePath = filePath.slice(1);
-    // Убираем якорь/query если есть
-    const hashIdx = filePath.indexOf('#');
-    if (hashIdx >= 0) filePath = filePath.slice(0, hashIdx);
-    const qIdx = filePath.indexOf('?');
-    if (qIdx >= 0) filePath = filePath.slice(0, qIdx);
-    // Если пусто — index.html
-    if (!filePath) filePath = 'index.html';
-
-    const fullPath = path.join(__dirname, filePath);
-    callback({ path: fullPath });
-  });
-
-  win.loadURL('app://index.html');
+  // Загружаем index.html прямо из app.asar
+  win.loadFile('index.html');
 
   // F12 — открыть/закрыть DevTools
   win.webContents.on('before-input-event', (event, input) => {
@@ -71,7 +42,7 @@ function createWindow() {
     }
   });
 
-  // Логи из renderer — в консоль Electron (для отладки)
+  // Логи из renderer в консоль Electron
   win.webContents.on('console-message', (event, level, message, line, sourceId) => {
     console.log('[RENDERER]', message, '(' + sourceId + ':' + line + ')');
   });
