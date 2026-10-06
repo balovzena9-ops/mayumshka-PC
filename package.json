@@ -21,13 +21,14 @@
       "output": "dist",
       "buildResources": "build"
     },
-    "files": [
-      "index.html",
-      "main.js",
-      "package.json",
-      "build/icon.ico",
-      "build/icon.png"
-    ],
+ "files": [
+  "index.html",
+  "three.min.js",
+  "main.js",
+  "package.json",
+  "build/icon.ico",
+  "build/icon.png"
+],
     "win": {
       "target": [
         {
