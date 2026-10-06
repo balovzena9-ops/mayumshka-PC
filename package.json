@@ -7,8 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
-    "build:win": "electron-builder --win --config electron-builder.yml"
+    "build:win": "electron-builder --win --publish never"
   },
   "devDependencies": {
     "electron": "^28.3.3",
@@ -33,9 +32,7 @@
       "target": [
         {
           "target": "nsis",
-          "arch": [
-            "x64"
-          ]
+          "arch": ["x64"]
         }
       ],
       "icon": "build/icon.ico",
