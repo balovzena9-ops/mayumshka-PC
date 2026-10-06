@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-latest   # ← Windows-раннер GitHub
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
@@ -48,7 +48,7 @@ jobs:
             dist/*.zip
           if-no-files-found: error
 
-  # ============ RELEASE (при теге v*) ============
+  # ============ RELEASE (только при теге v*) ============
   release:
     needs: build-windows
     runs-on: ubuntu-latest
@@ -63,8 +63,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            artifacts/MayUmshka-Windows/*
+          files: artifacts/MayUmshka-Windows/*
           draft: false
           prerelease: false
           generate_release_notes: true
