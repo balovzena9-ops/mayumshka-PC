@@ -22,6 +22,10 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Clean electron-builder cache
+        run: |
+          Remove-Item -Recurse -Force "$env:LOCALAPPDATA\electron-builder" -ErrorAction SilentlyContinue
+
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
@@ -48,7 +52,6 @@ jobs:
             dist/*.zip
           if-no-files-found: error
 
-  # ============ RELEASE (только при теге v*) ============
   release:
     needs: build-windows
     runs-on: ubuntu-latest
