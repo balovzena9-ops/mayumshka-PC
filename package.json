@@ -1,41 +1,19 @@
 {
-  "name": "mayumshka-game",
+  "name": "mayumshka",
   "version": "1.0.0",
+  "description": "MayUmshka — Завод «Баловск»",
   "main": "main.js",
+  "author": "MYRUNPLAY",
+  "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win --x64"
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "build:mac": "electron-builder --mac"
   },
   "devDependencies": {
-    "electron": "^31.0.0",
+    "electron": "^28.3.3",
     "electron-builder": "^24.13.3"
-  },
-  "build": {
-    "appId": "com.mayumshka.game",
-    "productName": "MayUmshka",
-    "directories": {
-      "output": "dist"
-    },
-    "files": [
-      "main.js",
-      "www/**/*"
-    ],
-    "win": {
-      "icon": "www/icon.png",
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    "nsis": {
-      "oneClick": true,
-      "allowToChangeInstallationDirectory": false,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    }
   }
 }
