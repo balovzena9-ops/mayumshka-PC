@@ -11,24 +11,21 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # 👇 УБРАЛИ cache: 'npm', чтобы не падало на отсутствии package-lock.json
 
-      - name: Install dependencies
+      - name: Install deps
         run: npm install
 
-      - name: Build EXE (x64)
+      - name: Build EXE
         run: npm run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload artifacts
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: MayUmshka-Windows-x64
