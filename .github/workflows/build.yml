@@ -1,0 +1,38 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          # 👇 УБРАЛИ cache: 'npm', чтобы не падало на отсутствии package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build EXE (x64)
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MayUmshka-Windows-x64
+          path: |
+            dist/*.exe
+            dist/*.blockmap
+          if-no-files-found: error
