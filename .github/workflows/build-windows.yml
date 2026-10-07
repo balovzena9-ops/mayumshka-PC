@@ -1,13 +1,10 @@
-name: Build Windows App
+name: Build Windows EXE
 
 on:
   push:
     branches: [ main, master ]
-    tags:
-      - 'v*'
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:
+    tags: [ 'v*' ]
+  workflow_dispatch:        # ← можно запускать вручную кнопкой в Actions
 
 jobs:
   build-windows:
@@ -21,57 +18,35 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: List repo files
-        run: |
-          Write-Host "=== ROOT ==="
-          Get-ChildItem -Force
-          Write-Host "=== build/ ==="
-          Get-ChildItem -Force build -ErrorAction SilentlyContinue
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --no-package-lock
+        run: npm install
 
-      - name: Build Windows installer
-        run: npm run build:win
+      - name: Build EXE (x64)
+        run: npm run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: false
 
-      - name: Upload Windows artifacts
+      - name: List dist
+        run: dir dist
+        shell: cmd
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: MayUmshka-Windows
+          name: MayUmshka-Windows-x64
           path: |
             dist/*.exe
-            dist/*.zip
+            dist/*.blockmap
           if-no-files-found: error
 
-  release:
-    needs: build-windows
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
+      # Автоматический релиз при пуше тега вида v1.0.0
       - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/MayUmshka-Windows/*
-          draft: false
-          prerelease: false
-          generate_release_notes: true
+          files: |
+            dist/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
