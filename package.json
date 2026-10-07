@@ -1,13 +1,42 @@
 {
   "name": "mayumshka",
   "version": "1.0.0",
-  "description": "MayUmshka — Завод «Баловск»",
+  "description": "MayUmshka - Завод Баловск",
   "author": "MYRUNPLAY",
   "license": "MIT",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.myrunplay.mayumshka",
+    "productName": "MayUmshka",
+    "copyright": "Copyright (c) 2024 MYRUNPLAY",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "www/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "MayUmshka"
+    }
   },
   "devDependencies": {
     "electron": "^31.0.0",
