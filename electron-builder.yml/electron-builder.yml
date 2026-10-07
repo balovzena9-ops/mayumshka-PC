@@ -8,17 +8,15 @@ directories:
 
 files:
   - main.js
-  - www/**/*
+  - www/**/*      # 👈 ВСЕ файлы из www, включая three.min.js
   - package.json
 
 win:
   target:
     - target: nsis
-      arch:
-        - x64
+      arch: [x64]
     - target: portable
-      arch:
-        - x64
+      arch: [x64]
   icon: build/icon.ico
   artifactName: "${productName}-${version}-${arch}.${ext}"
 
@@ -27,8 +25,4 @@ nsis:
   perMachine: false
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
-  createStartMenuShortcut: true
   shortcutName: "MayUmshka"
-
-portable:
-  artifactName: "${productName}-${version}-portable-x64.${ext}"
