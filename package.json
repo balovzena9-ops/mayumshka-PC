@@ -2,53 +2,15 @@
   "name": "mayumshka",
   "version": "1.0.0",
   "description": "MayUmshka — Завод «Баловск»",
-  "main": "main.js",
   "author": "MYRUNPLAY",
   "license": "MIT",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
-    "build:win": "electron-builder --win --publish never"
+    "build": "electron-builder --win --x64"
   },
   "devDependencies": {
-    "electron": "^28.3.3",
+    "electron": "^31.0.0",
     "electron-builder": "^24.13.3"
-  },
-  "build": {
-    "appId": "com.myrunplay.mayumshka",
-    "productName": "MayUmshka",
-    "copyright": "© 2026 MYRUNPLAY",
-    "directories": {
-      "output": "dist",
-      "buildResources": "build"
-    },
-    "files": [
-      "index.html",
-      "three.min.js",
-      "main.js",
-      "package.json",
-      "build/icon.ico",
-      "build/icon.png"
-    ],
-    "win": {
-      "target": [
-        {
-          "target": "portable",
-          "arch": ["x64"]
-        }
-      ],
-      "icon": "build/icon.ico",
-      "artifactName": "${productName}-${version}-Portable.${ext}"
-    },
-    "portable": {
-      "artifactName": "${productName}-${version}-Portable.${ext}",
-      "requestExecutionLevel": "user"
-    },
-    "mac": {
-      "target": []
-    },
-    "linux": {
-      "target": []
-    }
   }
 }
