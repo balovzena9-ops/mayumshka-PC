@@ -24,6 +24,10 @@ function createWindow() {
   });
 
   win.loadFile('index.html');
+
+  // Автоматически открываем DevTools в отдельном окне
+  win.webContents.openDevTools({ mode: 'detach' });
+
   win.once('ready-to-show', () => {
     win.show();
     win.maximize();
